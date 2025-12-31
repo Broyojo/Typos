@@ -105,7 +105,7 @@ class Strategy {
     String[] parts = s.split(",");
     float aspect_ratio = Float.parseFloat(parts[0].split("-")[1]);
     String shapeType = parts[0].split("-")[0];
-    if(shapeType.equals("OS") || shapeType.equals("SOS")){
+    if (shapeType.equals("OS") || shapeType.equals("SOS")) {
       return round(aspect_ratio*h*h);
     }
     return round(aspect_ratio*h);
@@ -136,13 +136,13 @@ class Strategy {
   }
 
   int getBucketMax() {
-    int record = 0;
+    int best = 0;
     for (int b = 0; b < BUCKET_MAX; b++) {
-      if (buckets[b] > record) {
-        record = buckets[b];
+      if (buckets[b] > best) {
+        best = buckets[b];
       }
     }
-    return record;
+    return best;
   }
 
   int findClosestHorizontalValid(Tile[][] map, int x, int y, int W, int H) {
@@ -360,16 +360,16 @@ class Strategy {
     popMatrix();
   }
   int getLongestPath(Strategy[] array, int sign) {
-    int record = 0;
+    int best = 0;
     if (sign == -1) {
-      record = -999999999;
+      best = -999999999;
     }
     for (int s = 0; s < array.length; s++) {
-      if (array[s].path.size()*sign > record) {
-        record = array[s].path.size()*sign;
+      if (array[s].path.size()*sign > best) {
+        best = array[s].path.size()*sign;
       }
     }
-    return record*sign;
+    return best*sign;
   }
 
   void drawPath(float scale, float thickness) {
