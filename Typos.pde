@@ -33,6 +33,7 @@ int runs = 0;
 int FRAMES_PER_RUN = 200;
 int framesSinceLast = 0;
 float prog = 0;
+int cyclesPerFrame = 1;
 PImage crown;
 Dictionary<String, String> names = new Hashtable<>();
 
@@ -40,15 +41,16 @@ Strategy[] strats = new Strategy[strat_codes.length];
 int[] path_chosen;
 float BASE_W = 1920;
 float BASE_H = 1080;
-float[] buttonBaseX = {1460, 1680, 1460, 1680, 1460};
-float[] buttonBaseY = {840, 840, 920, 920, 1000};
+float[] buttonBaseX = {1460, 1680, 1460, 1680, 1460, 1680};
+float[] buttonBaseY = {840, 840, 920, 920, 1000, 1000};
 float buttonBaseW = 200;
 float buttonBaseH = 60;
 Button[] buttons = {new Button(0, 1460, 840, 200, 60, "Slow"),
   new Button(1, 1680, 840, 200, 60, "Medium"),
   new Button(2, 1460, 920, 200, 60, "Fast"),
   new Button(3, 1680, 920, 200, 60, "Instant"),
-  new Button(4, 1460, 1000, 200, 60, "I + Don't record")
+  new Button(4, 1460, 1000, 200, 60, "I + Don't record"),
+  new Button(5, 1680, 1000, 200, 60, "Ludicrous")
 };
 
 void setup() {
@@ -85,13 +87,15 @@ void setup() {
   }
 }
 void draw() {
-  if (framesSinceLast >= FRAMES_PER_RUN) {
-    setNewPaths();
-    framesSinceLast = 0;
-    runs++;
+  for (int c = 0; c < cyclesPerFrame; c++) {
+    if (framesSinceLast >= FRAMES_PER_RUN) {
+      setNewPaths();
+      framesSinceLast = 0;
+      runs++;
+    }
+    prog = (framesSinceLast+0.5)/FRAMES_PER_RUN*3;
+    framesSinceLast++;
   }
-  prog = (framesSinceLast+0.5)/FRAMES_PER_RUN*3;
-  framesSinceLast++;
 
   background(255, 255, 200);
   for (int s = 0; s < strat_codes.length; s++) {

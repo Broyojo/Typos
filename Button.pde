@@ -28,6 +28,7 @@ class Button{
   }
   
   void activate(){
+    cyclesPerFrame = 1;
     if(id == 0){
       FRAMES_PER_RUN = 1000;
     }else if(id == 1){
@@ -38,6 +39,9 @@ class Button{
       FRAMES_PER_RUN = 3;
     }else if(id == 4){
       FRAMES_PER_RUN = 1;
+    }else if(id == 5){
+      FRAMES_PER_RUN = 1;
+      cyclesPerFrame = 20;
     }
   }
 }
