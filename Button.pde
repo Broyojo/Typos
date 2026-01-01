@@ -28,6 +28,14 @@ class Button{
   }
   
   void activate(){
+    if(id == 6){
+      toggleEvolveMode();
+      return;
+    }
+    if(id == 7){
+      toggleEvolvePause();
+      return;
+    }
     cyclesPerFrame = 1;
     if(id == 0){
       FRAMES_PER_RUN = 1000;

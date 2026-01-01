@@ -11,11 +11,16 @@ class Strategy {
   Strategy[] array;
   float[] data = {0, 0};
   int[] buckets;
+  boolean isFree;
+  float[] freeLeft;
+  float[] freeRight;
+  int freePoints;
 
   public Strategy(String s_, Strategy[] array_, int id_) {
     id = id_;
     s = s_;
     array = array_;
+    parseFreeform();
     tileW = 0;
     tileH = 0;
     tiles = new ArrayList<Tile>(0);
@@ -99,6 +104,56 @@ class Strategy {
       }
     }
     return false;
+  }
+
+  void parseFreeform() {
+    isFree = false;
+    freePoints = 0;
+    String[] parts = s.split(",");
+    String[] head = parts[0].split("-");
+    if (!head[0].equals("FREE")) {
+      return;
+    }
+    int total = head.length-2;
+    if (total < 4 || total%2 != 0) {
+      return;
+    }
+    freePoints = total/2;
+    freeLeft = new float[freePoints];
+    freeRight = new float[freePoints];
+    for (int i = 0; i < freePoints; i++) {
+      freeLeft[i] = constrain(Float.parseFloat(head[2+i]), 0, 1);
+      freeRight[i] = constrain(Float.parseFloat(head[2+freePoints+i]), 0, 1);
+      if (freeRight[i] < freeLeft[i]) {
+        float tmp = freeLeft[i];
+        freeLeft[i] = freeRight[i];
+        freeRight[i] = tmp;
+      }
+    }
+    isFree = true;
+  }
+
+  boolean freeShapeValid(int x, int y, int w, int h) {
+    if (!isFree || freePoints < 2) {
+      return false;
+    }
+    if (w <= 1 || h <= 1) {
+      return false;
+    }
+    float t = (float)y/(h-1);
+    float pos = t*(freePoints-1);
+    int idx = (int)floor(pos);
+    if (idx >= freePoints-1) {
+      idx = freePoints-2;
+    }
+    float frac = pos-idx;
+    float left = lerp(freeLeft[idx], freeLeft[idx+1], frac);
+    float right = lerp(freeRight[idx], freeRight[idx+1], frac);
+    if (right < left) {
+      right = left;
+    }
+    float fx = (float)x/(w-1);
+    return (fx >= left && fx <= right);
   }
 
   int getWidthFromHeight(int h) {
@@ -187,7 +242,12 @@ class Strategy {
   }
 
   boolean valid(String s, int x, int y, int w, int h) {
-    boolean inShape = shapeValid(getShape(), x, y, w, h);
+    boolean inShape = false;
+    if (isFree) {
+      inShape = freeShapeValid(x, y, w, h);
+    } else {
+      inShape = shapeValid(getShape(), x, y, w, h);
+    }
     if (!inShape) {
       return false;
     }
